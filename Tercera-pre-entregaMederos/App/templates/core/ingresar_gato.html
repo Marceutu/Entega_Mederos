@@ -1,0 +1,80 @@
+{% extends 'home.html' %}
+{% load static %}
+{% block contenido %}
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><center>Ingresar Datos del Gato/a</center></h5>
+                    {% if not user.is_authenticated %}
+                        <p>Debes <a href="{% url 'login' %}">iniciar sesión</a> para guardar los datos.</p>
+                    {% endif %}
+                    <form method="POST" onsubmit="return verificarAutenticacion()"> 
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_sexo" class="form-label">Sexo</label>
+                            {{ gato_form.sexo }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_edad" class="form-label">Edad</label>
+                            {{ gato_form.edad }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_descripcion" class="form-label">Descripción</label>
+                            <div class="input-group">
+                                {{ gato_form.descripcion }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_estado_salud" class="form-label">Estado de Salud</label>
+                            <div class="input-group">
+                                {{ gato_form.estado_salud }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_color_pelo" class="form-label">Color de Pelo</label>
+                            {{ gato_form.color_pelo }}
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="background-color: #145A32 !important;">Guardar</button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const isAuthenticated = "{{ user.is_authenticated|yesno:'true,false' }}" === 'true';
+
+        function verificarAutenticacion() {
+            if (!isAuthenticated) {
+                alert('Debes iniciar sesión para guardar los datos.');
+                return false; // Evita el envío del formulario
+            }
+            return true; // Permite el envío del formulario si el usuario está autenticado
+        }
+
+        function limpiarCampos() {
+            document.getElementById('id_sexo').value = '';
+            document.getElementById('id_edad').value = '';
+            document.getElementById('id_descripcion').value = '';
+            document.getElementById('id_estado_salud').value = '';
+            document.getElementById('id_color_pelo').value = '';
+        }
+
+        function validarFormulario() {
+            var sexo = document.getElementById('id_sexo').value;
+            var edad = document.getElementById('id_edad').value;
+            var descripcion = document.getElementById('id_descripcion').value;
+            var estadoSalud = document.getElementById('id_estado_salud').value;
+            var colorPelo = document.getElementById('id_color_pelo').value;
+
+            if (sexo === '' || edad === '' || descripcion === '' || estadoSalud === '' || colorPelo === '') {
+                alert('Por favor, completa todos los campos.');
+                return false; // Detiene el envío del formulario
+            }
+
+            limpiarCampos(); // Limpia los campos si todos los campos están completos
+            return true; // Envía el formulario si todos los campos están completos
+        }
+    </script>
+{% endblock contenido %}

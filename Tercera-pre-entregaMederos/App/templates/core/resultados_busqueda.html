@@ -1,0 +1,86 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block contenido %}
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><center>Resultados de la búsqueda</center></h5>
+                    
+                    {% if animales %}
+                        <ul>
+                            {% for animal in animales %}
+                                <li>
+                                    <form method="post" action="{% url 'editar_animal' animal.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="animal_id" value="{{ animal.id }}">
+                                        <div class="mb-3">
+                                            <label for="id_sexo_{{ animal.id }}" class="form-label">Sexo</label>
+                                            <input type="text" class="form-control" id="id_sexo_{{ animal.id }}" name="sexo" value="{{ animal.sexo }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="id_edad_{{ animal.id }}" class="form-label">Edad</label>
+                                            <input type="text" class="form-control" id="id_edad_{{ animal.id }}" name="edad" value="{{ animal.edad }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="id_descripcion_{{ animal.id }}" class="form-label">Descripción</label>
+                                            <textarea class="form-control" id="id_descripcion_{{ animal.id }}" name="descripcion">{{ animal.descripcion }}</textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="id_estado_salud_{{ animal.id }}" class="form-label">Estado de Salud</label>
+                                            <input type="text" class="form-control" id="id_estado_salud_{{ animal.id }}" name="estado_salud" value="{{ animal.estado_salud }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="id_color_pelo_{{ animal.id }}" class="form-label">Color de Pelo</label>
+                                            <input type="text" class="form-control" id="id_color_pelo_{{ animal.id }}" name="color_pelo" value="{{ animal.color_pelo }}">
+                                        </div>
+                                        <!-- Botón de eliminar -->
+                                        <button class="btn btn-danger btn-eliminar" data-animal-id="{{ animal.id }}">Eliminar</button>
+                                        <!-- Botón de editar -->
+                                        <button type="submit" class="btn btn-primary" name="editar" value="{{ animal.id }}">Editar</button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No se encontraron resultados.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+       var botonesEliminar = document.querySelectorAll('.btn-eliminar');
+       botonesEliminar.forEach(function(boton) {
+        boton.addEventListener('click', function(event) {
+            event.preventDefault();
+            var animalId = this.getAttribute('data-animal-id');
+            var sexo = document.querySelector('#id_sexo').value;
+            var edad = document.querySelector('#id_edad').value;
+            if (confirm('¿Estás seguro de que quieres eliminar este animal?')) {
+                fetch(`/App/eliminar_animal/${animalId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ sexo: sexo, edad: edad })
+                }).then(function(response) {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Hubo un error al eliminar el animal.');
+                    }
+                }).catch(function(error) {
+                    console.error('Error al eliminar el animal:', error);
+                    alert('Hubo un error al eliminar el animal.');
+                });
+            }
+        });
+    });
+   });
+   
+ </script>
+{% endblock contenido %}

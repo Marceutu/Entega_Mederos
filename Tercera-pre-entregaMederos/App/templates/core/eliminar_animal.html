@@ -1,0 +1,36 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block contenido %}
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6">
+            {% if animal %}
+                <h2>Eliminar Animal:</h2>
+                <form id="eliminar-animal-form" method="POST" action="{% url 'eliminar_animal' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="sexo">Sexo:</label>
+                        <select name="sexo" id="sexo">
+                            <option value="Macho">Macho</option>
+                            <option value="Hembra">Hembra</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edad">Edad:</label>
+                        <input type="text" name="edad" id="edad">
+                    </div>
+                    <button id="btn-eliminar" type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+             {% else %}
+                <p>No se encontró el animal que se desea eliminar.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% if messages %}
+        <div class="alert alert-success" role="alert">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock contenido %}
